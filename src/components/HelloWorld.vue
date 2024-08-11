@@ -1,58 +1,103 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="container">
+    <h1>Formulaire de Vente</h1>
+    <form @submit.prevent="addVent">
+      <div class="row col-md-5">
+        <label for="reference" class="form-label">Reference :</label>
+        <input type="text" class="form-control" id="reference" v-model="reference">
+      </div>
+      <div class="row col-md-5">
+        <label for="designation" class="form-label">Designation :</label>
+        <input type="text" class="form-control" id="designation" v-model="designation">
+      </div>
+      <div class="row col-md-5">
+        <label for="quantite" class="form-label">Quantite :</label>
+        <input type="number" class="form-control" id="quantite" v-model="quantite">
+      </div>
+      <div class="row col-md-5">
+        <label for="prix" class="form-label">Prix :</label>
+        <input type="number" class="form-control" id="prix" v-model="prix">
+      </div>
+      <button type="submit" class="btn btn-primary" id="ajout">Ajouter</button>
+    </form>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Designation</th>
+          <th>Quantite</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(list, index) in lists" :key="index">
+          <td>{{ list.reference }}</td>
+          <td>{{ list.designation }}</td>
+          <td>{{ list.quantite }}</td>
+          <td>{{ list.prix }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-if="message" :class="error ? 'red' : 'green'">{{ message }}</p>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+<script setup>
+import { ref } from "vue";
+
+const reference = ref('');
+const designation = ref('');
+const quantite = ref(null);
+const prix = ref(null);
+const lists = ref([]);
+const message = ref();
+let error = false;
+
+function addVent() {
+  if (reference.value === '' || designation.value === '' || quantite.value === null || prix.value === null) {
+    // alert("Vous ne pouvez pas ajouter une tâche vide");
+    error = true;
+    message.value="Vous ne pouvez pas ajouter une tâche vide";
+  } else {
+    error = false;
+    lists.value.push({
+      reference: reference.value,
+      designation: designation.value,
+      quantite: quantite.value,
+      prix: prix.value
+    });
+    reference.value = '';
+    designation.value = '';
+    quantite.value = null;
+    prix.value = null;
+    message.value="Les champs ont été ajouter avec sucsé";
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
+<style>
+table.table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  width: 40%;
+  margin-top: 20px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+table.table th,
+table.table td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+#ajout{
+  width: 40%;
+  margin-top: 20px;
 }
-a {
-  color: #42b983;
+.red{
+  color: red;
+}
+.green{
+  color: green;
 }
 </style>
